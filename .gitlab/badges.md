@@ -1,0 +1,2 @@
+[![](https://gitlab.com/pl.rachuna-net/infrastructure/ansible/roles/ca-certificates/-/badges/release.svg)](https://gitlab.com/pl.rachuna-net/infrastructure/ansible/roles/ca-certificates/-/releases)
+[![](https://gitlab.com/pl.rachuna-net/infrastructure/ansible/roles/ca-certificates/badges/main/pipeline.svg)](https://gitlab.com/pl.rachuna-net/infrastructure/ansible/roles/ca-certificates/-/commits/main)

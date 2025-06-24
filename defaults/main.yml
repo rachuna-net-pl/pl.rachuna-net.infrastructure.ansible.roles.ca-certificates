@@ -1,0 +1,9 @@
+---
+input_debug: false
+input_disable_reboot: false
+input_packages_upgrade: true
+
+input_ubuntu_repositories: []
+input_redhat_repositories: []
+input_packages_to_install: []
+input_packages_to_remove: []

@@ -1,0 +1,19 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+
+  roles:
+    - role: ca-certificates
+      vars:
+        input_debug: true
+        input_certificates:
+          ca: >-
+              {{
+                lookup('community.hashi_vault.vault_kv2_get', 'certificates/root-ca', engine_mount_point='kv-certificates')['secret']['certificate']
+              }}
+          intermediate: >-
+              {{
+                lookup('community.hashi_vault.vault_kv2_get', 'certificates/internal-services-intermediate-ca', engine_mount_point='kv-certificates')['secret']['certificate']
+              }}

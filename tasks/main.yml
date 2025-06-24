@@ -1,0 +1,62 @@
+---
+### Debug ###
+- name: "🔍 Debug: os family"
+  debug:
+      msg: "{{ ansible_os_family }}"
+  when: input_debug
+
+- name: "🔗 Include install packages"
+  include_tasks: "install-{{ ansible_os_family | lower }}.yml"
+
+- set_fact:
+      var_bundle_ca: >-
+        {{ input_certificates.ca | default('') }}
+
+        {{ input_certificates.intermediate | default('') }}
+
+- name: "🎫 Create ca"
+  copy:
+      content: "{{ var_bundle_ca | default('') }}"
+      dest: /usr/local/share/ca-certificates/ca.crt
+      mode: '0644'
+      owner: root
+      group: root
+  when:
+      - var_bundle_ca != ''
+      - ansible_os_family == "Ubuntu"
+
+- name: "🎫 Create ca"
+  copy:
+      content: "{{ var_bundle_ca | default('') }}"
+      dest: /etc/ssl/certs/ca-certificates.crt
+      mode: '0644'
+      owner: root
+      group: root
+  when:
+      - ansible_os_family == "Alpine"
+      - var_bundle_ca != ''
+
+- name: "🎫 Create ca"
+  copy:
+      content: "{{ var_bundle_ca | default('') }}"
+      dest: /etc/pki/ca-trust/source/anchors/ca.crt
+      mode: '0644'
+      owner: root
+      group: root
+  when:
+      - var_bundle_ca != ''
+      - ansible_os_family == "RedHat"
+
+- name: "🔧 Update CA certificates"
+  changed_when: false
+  command: update-ca-certificates
+  when:
+      - ansible_os_family == "Ubuntu"
+      - var_bundle_ca != ''
+
+- name: "🔧 Update CA certificates"
+  changed_when: false
+  command: update-ca-trust extract
+  when:
+      - ansible_os_family == "RedHat"
+      - var_bundle_ca != ''

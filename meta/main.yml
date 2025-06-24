@@ -1,0 +1,34 @@
+---
+galaxy_info:
+  role_name: install_packages
+  namespace: pl_rachuna_net
+  author: "Maciej Rachuna"
+  description: "Ansible Role do instalacji pakietów na serwerach Linux."
+  license: "MIT"
+  min_ansible_version: "2.9"
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Alpine
+      versions:
+        - all
+    - name: EL
+      versions:
+        - "7"
+        - "8"
+        - "9"
+  galaxy_tags:
+    - packages
+    - installation
+    - software
+    - system
+    - server
+    - linux
+    - hardening
+
+dependencies: []

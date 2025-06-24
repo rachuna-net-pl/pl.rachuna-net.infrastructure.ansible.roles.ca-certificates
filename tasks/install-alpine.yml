@@ -1,0 +1,17 @@
+---
+- name: "💾 Install packages"
+  block:
+    - name: "💾 Install packages"
+      register: apk_install
+      apk:
+        update_cache: true
+        name:
+          - ca-certificates
+          - curl
+        state: present
+
+  rescue:
+    - name: "❌ Install packages failed"
+      failed_when: true
+      ansible.builtin.debug:
+        msg: "{{ apk_install.stderr }}"
