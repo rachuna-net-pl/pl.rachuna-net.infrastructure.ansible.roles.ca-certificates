@@ -1,45 +1,62 @@
-## Przykładowe użycie
-```yml
----
-- name: Converge
-  hosts: all
-  become: true
-  gather_facts: true
+## Wymagania
 
+- Ansible w wersji co najmniej 2.9
+- System operacyjny: Debian, Ubuntu, Alpine, RedHat Enterprise Linux (7, 8, 9)
+- Dostęp do repozytoriów pakietów systemowych
+
+---
+## Zmienne
+
+Rola udostępnia następujące zmienne konfiguracyjne (zdefiniowane w `defaults/main.yml`):
+
+| Zmienna                  | Domyślna wartość | Opis                                                                                  |
+|--------------------------|------------------|---------------------------------------------------------------------------------------|
+| `input_debug`            | `false`          | Włącza debugowanie (wyświetlanie informacji o rodzinie systemu)                        |
+| `input_ubuntu_repositories` | `[]`          | Lista dodatkowych repozytoriów dla systemów Ubuntu/Debian                            |
+| `input_redhat_repositories` | `[]`          | Lista dodatkowych repozytoriów dla systemów RedHat                                  |
+| `input_packages_to_install` | `[]`           | Lista pakietów do instalacji (domyślnie puste, rola instaluje `ca-certificates` i `curl`) |
+| `input_packages_to_remove` | `[]`            | Lista pakietów do usunięcia                                                          |
+
+Dodatkowo rola oczekuje zmiennej `input_certificates`, która powinna zawierać certyfikaty CA i certyfikaty pośrednie w formie tekstowej, np.:
+
+```yaml
+input_certificates:
+  ca: |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+  intermediate: |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+```
+
+---
+## Użycie
+
+Przykładowy playbook wykorzystujący rolę:
+
+```yaml
+- hosts: all
   roles:
-    - role: ca-certificates
+    - role: pl_rachuna_net.ca_certificates
       vars:
         input_debug: true
         input_certificates:
-          ca: >-
-              {{
-                lookup('community.hashi_vault.vault_kv2_get', 'certificates/internal-serivces-intermediate-ca', engine_mount_point='kv')['secret']['certificate']
-              }}
-          intermediate: >-
-              {{
-                lookup('community.hashi_vault.vault_kv2_get', 'certificates/internal-services-intermediate-ca', engine_mount_point='kv')['secret']['intermediate']
-              }}
+          ca: "{{ lookup('file', 'files/ca.crt') }}"
+          intermediate: "{{ lookup('file', 'files/intermediate.crt') }}"
+        input_packages_to_install:
+          - ca-certificates
+          - curl
 ```
-## Testy molecule
+
+---
+## Testowanie
+
+Rola zawiera testy Molecule, które można uruchomić poleceniem:
 
 ```bash
-python3 -m venv ~/.venvs/molecule
-source ~/.venvs/molecule/bin/activate
-pip install --upgrade pip
-
-pip3 install ansible-core molecule molecule-proxmox pytest-testinfra ansible-lint molecule-plugins requests testinfra
-
-export TEST_PROXMOX_DEBUG=
-export TEST_PROXMOX_HOST=
-export TEST_PROXMOX_PORT=
-export TEST_PROXMOX_USER=
-export TEST_PROXMOX_PASSWORD=
-export TEST_PROXMOX_NODE=
-
 molecule test
-
-# molecule create
-# molecule converge
-# molecule verify
-# molecule destroy
- ```
+```
+> [!tip]
+> Testy znajdują się w katalogu `molecule/default/` i obejmują konwergencję oraz sprawdzenie poprawności konfiguracji.

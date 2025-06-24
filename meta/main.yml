@@ -1,9 +1,9 @@
 ---
 galaxy_info:
-  role_name: install_packages
+  role_name: ca_certificates
   namespace: pl_rachuna_net
   author: "Maciej Rachuna"
-  description: "Ansible Role do instalacji pakietów na serwerach Linux."
+  description: "Ansible Role do konfiguracji certyfikatów CA na serwerach Linux."
   license: "MIT"
   min_ansible_version: "2.9"
 
